@@ -1,0 +1,14 @@
+// 获取间距值
+@function spacer($level) {
+  @return map-get($spacers, $level);
+}
+
+// 颜色透明度调整
+@function color-alpha($color, $opacity) {
+  @return rgba($color, $opacity);
+}
+
+// 响应式单位转换
+@function responsive-size($base, $multiplier: 1) {
+  @return clamp($base * 0.8, 4vw, $base * $multiplier);
+}

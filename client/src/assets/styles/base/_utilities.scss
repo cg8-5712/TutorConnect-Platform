@@ -1,0 +1,51 @@
+// 间距工具
+@each $level, $size in $spacers {
+  .m-#{$level} { margin: #{$size} !important; }
+  .mt-#{$level} { margin-top: #{$size} !important; }
+  .mb-#{$level} { margin-bottom: #{$size} !important; }
+  .ml-#{$level} { margin-left: #{$size} !important; }
+  .mr-#{$level} { margin-right: #{$size} !important; }
+  .mx-#{$level} { margin-left: #{$size} !important; margin-right: #{$size} !important; }
+  .my-#{$level} { margin-top: #{$size} !important; margin-bottom: #{$size} !important; }
+  
+  .p-#{$level} { padding: #{$size} !important; }
+  .pt-#{$level} { padding-top: #{$size} !important; }
+  .pb-#{$level} { padding-bottom: #{$size} !important; }
+  .pl-#{$level} { padding-left: #{$size} !important; }
+  .pr-#{$level} { padding-right: #{$size} !important; }
+  .px-#{$level} { padding-left: #{$size} !important; padding-right: #{$size} !important; }
+  .py-#{$level} { padding-top: #{$size} !important; padding-bottom: #{$size} !important; }
+}
+
+// 显示工具
+.d-none { display: none !important; }
+.d-block { display: block !important; }
+.d-flex { display: flex !important; }
+.d-grid { display: grid !important; }
+
+// 响应式显示
+@each $breakpoint, $value in $breakpoints {
+  @include media-breakpoint-up($breakpoint) {
+    .d-#{$breakpoint}-none { display: none !important; }
+    .d-#{$breakpoint}-block { display: block !important; }
+    .d-#{$breakpoint}-flex { display: flex !important; }
+    .d-#{$breakpoint}-grid { display: grid !important; }
+  }
+}
+
+// 弹性布局工具
+.flex-column { flex-direction: column; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.align-center { align-items: center; }
+.flex-grow { flex-grow: 1; }
+
+// 边框工具
+.rounded { border-radius: $border-radius; }
+.border { border: $border-width solid $border-color; }
+.border-top { border-top: $border-width solid $border-color; }
+.border-bottom { border-bottom: $border-width solid $border-color; }
+
+// 阴影工具
+.shadow-sm { box-shadow: $box-shadow-sm; }
+.shadow { box-shadow: $box-shadow; }

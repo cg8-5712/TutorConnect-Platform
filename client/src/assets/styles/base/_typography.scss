@@ -1,0 +1,62 @@
+body {
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+  font-weight: $font-weight-normal;
+  color: $color-gray-800;
+  background-color: $color-gray-100;
+  line-height: 1.6;
+}
+
+// 标题层级
+h1, .h1 {
+  font-size: responsive-size(2.5rem, 1.2);
+  font-weight: $font-weight-bold;
+  line-height: 1.2;
+  margin-bottom: spacer(3);
+}
+
+h2, .h2 {
+  font-size: responsive-size(2rem, 1.15);
+  font-weight: $font-weight-bold;
+  margin-bottom: spacer(2.5);
+}
+
+h3, .h3 {
+  font-size: responsive-size(1.75rem, 1.1);
+  font-weight: $font-weight-bold;
+  margin-bottom: spacer(2);
+}
+
+// 段落
+p {
+  margin-bottom: spacer(3);
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// 链接
+a {
+  color: $color-primary;
+  text-decoration: none;
+  transition: color 0.2s;
+  
+  &:hover {
+    color: darken($color-primary, 15%);
+    text-decoration: underline;
+  }
+}
+
+// 文本样式
+.text-center {
+  text-align: center;
+}
+
+.text-muted {
+  color: $color-gray-500;
+}
+
+.text-truncate {
+  @include text-truncate();
+}

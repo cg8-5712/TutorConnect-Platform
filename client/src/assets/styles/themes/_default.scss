@@ -1,0 +1,37 @@
+:root {
+  // 主题色映射
+  --color-primary: #{$color-primary};
+  --color-secondary: #{$color-secondary};
+  --color-success: #{$color-success};
+  --color-warning: #{$color-warning};
+  --color-danger: #{$color-danger};
+  
+  // 背景色
+  --body-bg: #{$color-gray-100};
+  --card-bg: #{$color-white};
+  --header-bg: #{$color-white};
+  
+  // 文字色
+  --text-color: #{$color-gray-800};
+  --text-muted: #{$color-gray-500};
+  
+  // 边框
+  --border-color: #{$border-color};
+  --border-radius: #{$border-radius};
+  
+  // 阴影
+  --shadow-sm: #{$box-shadow-sm};
+  --shadow: #{$box-shadow};
+}
+
+// 暗黑模式
+@media (prefers-color-scheme: dark) {
+  :root {
+    --body-bg: #{$color-gray-800};
+    --card-bg: #{darken($color-gray-800, 5%)};
+    --header-bg: #{darken($color-gray-800, 3%)};
+    --text-color: #{$color-gray-200};
+    --text-muted: #{$color-gray-500};
+    --border-color: #{lighten($color-gray-800, 10%)};
+  }
+}

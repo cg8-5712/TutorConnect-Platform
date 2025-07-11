@@ -1,0 +1,50 @@
+// 颜色系统
+$color-primary: #4361ee;
+$color-secondary: #3f37c9;
+$color-success: #4cc9f0;
+$color-warning: #f72585;
+$color-danger: #e63946;
+
+// 中性色
+$color-white: #ffffff;
+$color-gray-100: #f8f9fa;
+$color-gray-200: #e9ecef;
+$color-gray-500: #adb5bd;
+$color-gray-800: #343a40;
+$color-black: #212529;
+
+// 字体系统
+$font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+$font-size-base: 1rem; // 16px
+$font-weight-normal: 400;
+$font-weight-bold: 600;
+
+// 间距系统
+$spacer: 1rem;
+$spacers: (
+  0: 0,
+  1: $spacer * 0.25,
+  2: $spacer * 0.5,
+  3: $spacer,
+  4: $spacer * 1.5,
+  5: $spacer * 3,
+);
+
+// 响应式断点
+$breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1400px
+);
+
+// 边框
+$border-radius: 0.5rem;
+$border-width: 1px;
+$border-color: $color-gray-200;
+
+// 阴影
+$box-shadow-sm: 0 0.125rem 0.25rem rgba($color-black, 0.075);
+$box-shadow: 0 0.5rem 1rem rgba($color-black, 0.15);

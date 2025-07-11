@@ -1,0 +1,39 @@
+// 1. 导入抽象层
+@import 'abstract/variables';
+@import 'abstract/mixins';
+@import 'abstract/functions';
+
+// 2. 导入基础样式
+@import 'base/reset';
+@import 'base/typography';
+@import 'base/utilities';
+
+// 3. 导入布局系统
+@import 'layout/grid';
+@import 'layout/navigation';
+@import 'layout/container';
+
+// 4. 导入组件样式
+@import 'components/buttons';
+@import 'components/cards';
+
+// 5. 导入主题
+@import 'themes/default';
+
+// 6. 全局样式
+body {
+  background-color: var(--body-bg);
+  color: var(--text-color);
+}
+
+// 7. 页面过渡效果
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.page-enter-from,
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
