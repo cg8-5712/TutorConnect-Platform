@@ -48,3 +48,16 @@ $border-color: $color-gray-200;
 // 阴影
 $box-shadow-sm: 0 0.125rem 0.25rem rgba($color-black, 0.075);
 $box-shadow: 0 0.5rem 1rem rgba($color-black, 0.15);
+
+// 容器最大宽度配置
+$container-max-widths: (
+  xs: 100%,
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1140px,
+  xxl: 1320px
+);
+
+// 默认容器内边距
+$container-padding: $spacer * 1.5;
