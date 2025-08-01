@@ -1,3 +1,5 @@
+import express from 'express';
+import connectDB from './db.js'; 
 const express = require('express');
 const connectDB = require('./config/database');
 const config = require('./config/config');
