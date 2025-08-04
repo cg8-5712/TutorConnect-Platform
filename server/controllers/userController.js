@@ -1,11 +1,18 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+require('dotenv').config(); 
 
 // 创建用户
-exports.createUser = async (req, res) => {
+exports.register = async (req, res) => {
     try {
-        const { username, password, role } = req.body;
+        const { username, password, role} = req.body;
+
+        // 检查用户是否已存在
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ message: 'Email already registered' });
+        }
 
         // 密码加密
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -17,9 +24,27 @@ exports.createUser = async (req, res) => {
         });
 
         await user.save();
-        res.status(201).json({ message: 'User created successfully' });
+
+        // 注册后自动登录并返回 JWT确认
+        const token = jwt.sign(
+            { id: user._id, role: user.role }, 
+            process.env.JWT_SECRET, 
+            { expiresIn: '1h' }
+        );
+        
+        res.status(201).json({ 
+            message: 'Registration successful', 
+            token,
+            user: {
+                id: user._id,
+                email: user.email,
+                fullName: user.fullName,
+                role: user.role
+            }
+        });
     } catch (error) {
-        res.status(500).json({ message: 'Error creating user' });
+        console.error('Registration error:', error);
+        res.status(500).json({ message: 'Error during registration' });
     }
 };
 
@@ -93,16 +118,37 @@ exports.register = async (req, res) => {
 // 用户登录
 exports.login = async (req, res) => {
     try {
-        const { username, password } = req.body;
-        const user = await User.findOne({ username });
+        const { email, password } = req.body;
+        const user = await User.findOne({ email });
 
-        if (!user || !(await bcrypt.compare(password, user.password))) {
-            return res.status(401).json({ message: 'Invalid credentials' });
+        if (!user) {
+            return res.status(401).json({ message: 'Invalid email or password' });
         }
-
-        const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.status(200).json({ token });
+        
+        // 验证密码
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            return res.status(401).json({ message: 'Invalid email or password' });
+        }
+        
+        // 生成真正的 JWT token
+        const token = jwt.sign(
+            { id: user._id, role: user.role }, 
+            process.env.JWT_SECRET, 
+            { expiresIn: '1h' }
+        );
+        
+        res.status(200).json({ 
+            token,
+            user: {
+                id: user._id,
+                email: user.email,
+                fullName: user.fullName,
+                role: user.role
+            }
+        });
     } catch (error) {
+        console.error('Login error:', error);
         res.status(500).json({ message: 'Error during login' });
     }
 };

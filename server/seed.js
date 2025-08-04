@@ -1,9 +1,19 @@
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 dotenv.config();
+
+// 获取当前文件路径
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.join(__dirname, '.env') });
+
+const bioText = '清华大学数学系毕业，10年高考辅导经验，专注于帮助学生提高解题技巧和应试能力。';
+console.log(`Bio 字符数: ${bioText.length}`);
 
 console.log("MONGO_URI:", process.env.MONGO_URI); 
 import { connectDB } from './db.js';
-import mongoose from 'mongoose';
 import User from './models/User.js';
 import Teacher from './models/Teacher.js';
 import Booking from './models/Booking.js';
@@ -40,7 +50,7 @@ const seedDatabase = async () => {
     // 创建教师资料
     const teacher = new Teacher({
       user: teacherUser._id,
-      bio: '清华大学数学系毕业，10年高考辅导经验，专注于帮助学生提高解题技巧和应试能力。',
+      bio: '清华大学数学系毕业，拥有10年以上高考辅导经验。专注于帮助学生提高解题技巧和应试能力，曾培养多名学生考入清华北大等顶尖高校。',
       subjects: ['高中数学', '高等数学'],
       experience: 10,
       hourlyRate: 300,
