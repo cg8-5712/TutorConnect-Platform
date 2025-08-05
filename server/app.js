@@ -1,25 +1,15 @@
-const authMiddleware = require('./middlewares/authMiddleware');
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import connectDB from './db.js';
+import authMiddleware from './middlewares/authMiddleware.js';
 
 // 加载环境变量
 dotenv.config();
 
 // 创建 Express 应用
 const app = express();
-
-// 数据库连接
-const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_URI);
-    console.log('✅ MongoDB 连接成功');
-  } catch (error) {
-    console.error(`❌ MongoDB 连接失败: ${error.message}`);
-    process.exit(1);
-  }
-};
 
 // 中间件
 app.use(cors()); // 启用 CORS
@@ -41,16 +31,6 @@ userRoutes.post('/login', (req, res) => {
 // 路由设置
 app.use('/api/users', userRoutes);
 
-// 受保护的路由示例
-app.use('/api/protected', (req, res, next) => {
-  // 简化的认证中间件
-  const token = req.headers.authorization;
-  if (!token) return res.status(401).json({ error: '未授权' });
-  next();
-}, (req, res) => {
-  res.json({ message: '受保护的路由', user: { id: 123, name: '测试用户' } });
-});
-
 // API 文档路由
 app.get('/api/docs', (_req, res) => {
   res.json({
@@ -63,15 +43,16 @@ app.get('/api/docs', (_req, res) => {
   });
 });
 
+// 受保护的路由（使用 authMiddleware）
 app.get('/api/protected', authMiddleware, (req, res) => {
-    res.json({
-        message: 'This is a protected route',
-        user: {
-            id: req.user._id,
-            email: req.user.email,
-            role: req.user.role
-        }
-    });
+  res.json({
+    message: '这是一个受保护的路由',
+    user: {
+      id: req.user._id,
+      email: req.user.email,
+      role: req.user.role
+    }
+  });
 });
 
 // 错误处理中间件
@@ -84,11 +65,42 @@ app.use((err, _req, res, _next) => {
 const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
-  await connectDB();
-  app.listen(PORT, () => {
-    console.log(`🚀 服务器运行在 http://localhost:${PORT}`);
-    console.log(`📚 API 文档: http://localhost:${PORT}/api/docs`);
-  });
+  try {
+  
+    await connectDB();
+    
+    const server = app.listen(PORT, () => {
+      console.log(`🚀 服务器运行在 http://localhost:${PORT}`);
+      console.log(`📚 API 文档: http://localhost:${PORT}/api/docs`);
+      
+      console.log(`🌿 运行环境: ${process.env.NODE_ENV || 'development'}`);
+    });
+    
+    const gracefulShutdown = () => {
+      console.log('\n正在关闭服务器...');
+      
+      server.close(async () => {
+        console.log('🔌 HTTP 服务器已关闭');
+        
+        await mongoose.connection.close();
+        console.log('📦 MongoDB 连接已关闭');
+        
+        process.exit(0);
+      });
+      
+      setTimeout(() => {
+        console.error('⏱️ 强制关闭超时，强制退出进程');
+        process.exit(1);
+      }, 5000);
+    };
+    
+    process.on('SIGINT', gracefulShutdown);  // Ctrl+C
+    process.on('SIGTERM', gracefulShutdown); // 容器关闭信号
+    
+  } catch (error) {
+    console.error('❌ 服务器启动失败:', error.message);
+    process.exit(1);
+  }
 };
 
 startServer();

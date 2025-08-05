@@ -1,5 +1,4 @@
 import Teacher from '../models/Teacher.js';
-import User from '../models/User.js';
 
 // 获取教师列表
 export const getTeachers = async (req, res) => {

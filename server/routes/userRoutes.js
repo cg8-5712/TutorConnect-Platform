@@ -1,8 +1,9 @@
-const express = require('express');
+import express from 'express';
+import userController from '../controllers/userController.js';
+import authMiddleware from '../middlewares/authMiddleware.js';
+import roleMiddleware from '../middlewares/roleMiddleware.js';
+
 const router = express.Router();
-const userController = require('../controllers/userController');
-const authMiddleware = require('../middlewares/authMiddleware');
-const roleMiddleware = require('../middlewares/roleMiddleware');
 
 // 创建用户
 router.post('/users', userController.createUser);
@@ -25,4 +26,4 @@ router.post('/register', userController.register);
 // 用户登录
 router.post('/login', userController.login);
 
-module.exports = router;
+export default router;

@@ -1,15 +1,16 @@
-const User = require('../models/User');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-require('dotenv').config(); 
+import User from '../models/User.js';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+dotenv.config();
 
 // 创建用户
-exports.register = async (req, res) => {
+export const register = async (req, res) => {
     try {
-        const { username, password, role} = req.body;
+        const { username, password, role } = req.body;
 
         // 检查用户是否已存在
-        const existingUser = await User.findOne({ email });
+        const existingUser = await User.findOne({ email: req.body.email });
         if (existingUser) {
             return res.status(400).json({ message: 'Email already registered' });
         }
@@ -27,13 +28,13 @@ exports.register = async (req, res) => {
 
         // 注册后自动登录并返回 JWT确认
         const token = jwt.sign(
-            { id: user._id, role: user.role }, 
-            process.env.JWT_SECRET, 
+            { id: user._id, role: user.role },
+            process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
-        
-        res.status(201).json({ 
-            message: 'Registration successful', 
+
+        res.status(201).json({
+            message: 'Registration successful',
             token,
             user: {
                 id: user._id,
@@ -49,7 +50,7 @@ exports.register = async (req, res) => {
 };
 
 // 获取用户列表
-exports.getUsers = async (req, res) => {
+export const getUsers = async (req, res) => {
     try {
         const users = await User.find();
         res.status(200).json(users);
@@ -59,7 +60,7 @@ exports.getUsers = async (req, res) => {
 };
 
 // 获取单个用户
-exports.getUserById = async (req, res) => {
+export const getUserById = async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
         if (!user) {
@@ -72,7 +73,7 @@ exports.getUserById = async (req, res) => {
 };
 
 // 更新用户信息
-exports.updateUser = async (req, res) => {
+export const updateUser = async (req, res) => {
     try {
         const { username, role } = req.body;
         const updatedUser = await User.findByIdAndUpdate(req.params.id, { username, role }, { new: true });
@@ -88,7 +89,7 @@ exports.updateUser = async (req, res) => {
 };
 
 // 删除用户
-exports.deleteUser = async (req, res) => {
+export const deleteUser = async (req, res) => {
     try {
         const deletedUser = await User.findByIdAndDelete(req.params.id);
         if (!deletedUser) {
@@ -100,8 +101,8 @@ exports.deleteUser = async (req, res) => {
     }
 };
 
-// 用户注册
-exports.register = async (req, res) => {
+// 用户注册（默认角色 student）
+export const registerStudent = async (req, res) => {
     try {
         const { username, password } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -116,7 +117,7 @@ exports.register = async (req, res) => {
 };
 
 // 用户登录
-exports.login = async (req, res) => {
+export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await User.findOne({ email });
@@ -124,21 +125,21 @@ exports.login = async (req, res) => {
         if (!user) {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
-        
+
         // 验证密码
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
-        
+
         // 生成真正的 JWT token
         const token = jwt.sign(
-            { id: user._id, role: user.role }, 
-            process.env.JWT_SECRET, 
+            { id: user._id, role: user.role },
+            process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
-        
-        res.status(200).json({ 
+
+        res.status(200).json({
             token,
             user: {
                 id: user._id,

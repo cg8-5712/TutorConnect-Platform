@@ -3,4 +3,4 @@ const loggerMiddleware = (req, res, next) => {
     next(); // 执行下一个中间件或路由处理程序
 };
 
-module.exports = loggerMiddleware;
+export default loggerMiddleware;

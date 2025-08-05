@@ -1,6 +1,5 @@
 import Booking from '../models/Booking.js';
 import Teacher from '../models/Teacher.js';
-import User from '../models/User.js';
 
 // 创建预约
 export const createBooking = async (req, res) => {
