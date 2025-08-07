@@ -7,10 +7,10 @@ dotenv.config();
 // 创建用户
 export const register = async (req, res) => {
     try {
-        const { username, password, role } = req.body;
+        const { username, password, role, email, fullName } = req.body;
 
         // 检查用户是否已存在
-        const existingUser = await User.findOne({ email: req.body.email });
+        const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: 'Email already registered' });
         }
@@ -20,6 +20,8 @@ export const register = async (req, res) => {
 
         const user = new User({
             username,
+            email,
+            fullName,
             password: hashedPassword,
             role
         });
@@ -75,8 +77,12 @@ export const getUserById = async (req, res) => {
 // 更新用户信息
 export const updateUser = async (req, res) => {
     try {
-        const { username, role } = req.body;
-        const updatedUser = await User.findByIdAndUpdate(req.params.id, { username, role }, { new: true });
+        const { username, role, fullName, email } = req.body;
+        const updatedUser = await User.findByIdAndUpdate(
+            req.params.id,
+            { username, role, fullName, email },
+            { new: true }
+        );
 
         if (!updatedUser) {
             return res.status(404).json({ message: 'User not found' });
@@ -104,10 +110,10 @@ export const deleteUser = async (req, res) => {
 // 用户注册（默认角色 student）
 export const registerStudent = async (req, res) => {
     try {
-        const { username, password } = req.body;
+        const { username, password, email, fullName } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const user = new User({ username, password: hashedPassword, role: 'student' }); // 默认角色
+        const user = new User({ username, email, fullName, password: hashedPassword, role: 'student' }); // 默认角色
         await user.save();
 
         res.status(201).json({ message: 'Registration successful' });
@@ -116,40 +122,45 @@ export const registerStudent = async (req, res) => {
     }
 };
 
-// 用户登录
+// 用户登录（合并逻辑，兼容 passwordHash 字段和 password 字段）
 export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
+        // 1. 查找用户
         const user = await User.findOne({ email });
-
         if (!user) {
-            return res.status(401).json({ message: 'Invalid email or password' });
+            return res.status(401).json({ error: '无效的邮箱或密码' });
         }
 
-        // 验证密码
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
-            return res.status(401).json({ message: 'Invalid email or password' });
+        // 2. 验证密码，兼容 passwordHash 和 password 字段
+        let isMatch = false;
+        if (user.passwordHash) {
+            isMatch = await bcrypt.compare(password, user.passwordHash);
+        } else if (user.password) {
+            isMatch = await bcrypt.compare(password, user.password);
+        }
+        if (!isMatch) {
+            return res.status(401).json({ error: '无效的邮箱或密码' });
         }
 
-        // 生成真正的 JWT token
+        // 3. 生成真正的 JWT token
         const token = jwt.sign(
-            { id: user._id, role: user.role },
+            { userId: user._id, role: user.role },
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
 
-        res.status(200).json({
+        // 4. 返回响应
+        res.json({
             token,
             user: {
-                id: user._id,
+                _id: user._id,
                 email: user.email,
                 fullName: user.fullName,
                 role: user.role
             }
         });
     } catch (error) {
-        console.error('Login error:', error);
-        res.status(500).json({ message: 'Error during login' });
+        res.status(500).json({ error: '登录失败' });
     }
 };
