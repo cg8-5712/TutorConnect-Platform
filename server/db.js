@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import config from "./src/config/config.js";
 
 // 加载环境变量
 dotenv.config();
@@ -7,28 +8,25 @@ dotenv.config();
 // 连接到 MongoDB 数据库
 const connectDB = async () => {
   try {
-    if (!process.env.MONGO_URI) {
-      throw new Error("MONGO_URI 环境变量未定义");
-    }
-    
-    // 设置 Mongoose 选项
+    const dbURI = `mongodb://${config.db.username}:${config.db.password}@${config.db.host}:${config.db.port}/${config.db.name}?authSource=admin`;
+    console.log(`🔗 Connecting to MongoDB: ${dbURI}`);
     const options = {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
+      useNewUrlParser: true,       // 使用新的 URL 解析器
+      useUnifiedTopology: true,    // 使用新的服务器发现和监视引擎
     };
-    
-    const conn = await mongoose.connect(process.env.MONGO_URI, options);
+
+    const conn = await mongoose.connect(dbURI, options);
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
-    
+
     // 设置事件监听
     setupConnectionEvents();
-    
-    return conn;
+
   } catch (error) {
     console.error(`❌ MongoDB Connection Error: ${error.message}`);
     process.exit(1);
   }
 };
+
 
 // 设置数据库连接事件监听
 const setupConnectionEvents = () => {

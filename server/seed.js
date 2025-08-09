@@ -14,9 +14,9 @@ console.log(`Bio 字符数: ${bioText.length}`);
 
 console.log("MONGO_URI:", process.env.MONGO_URI); 
 import { connectDB } from './db.js';
-import User from './models/User.js';
-import Teacher from './models/Teacher.js';
-import Booking from './models/Booking.js';
+import User from './src/models/User.js';
+import Teacher from './src/models/Teacher.js';
+import Booking from './src/models/Booking.js';
 
 const seedDatabase = async () => {
   try {

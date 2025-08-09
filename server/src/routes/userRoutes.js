@@ -6,7 +6,7 @@ import roleMiddleware from '../middlewares/roleMiddleware.js';
 const router = express.Router();
 
 // 创建用户
-router.post('/users', userController.createUser);
+router.post('/users', userController.register);
 
 // 获取用户列表
 router.get('/users', userController.getUsers);
